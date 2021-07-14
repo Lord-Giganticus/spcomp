@@ -4,6 +4,7 @@ import subprocess
 import re
 import tarfile
 import zipfile
+import shutil
 
 home_dir = os.path.dirname(__file__)
 
@@ -26,7 +27,7 @@ with open('link.txt','wb') as file:
     if system == "linux":
         subprocess.call('grep -oE -m1 "https://[a-z.]+/smdrop/[0-9.]+/sourcemod-(.*)-linux.tar.gz" downloads.html', stdout=file)
     else:
-        subprocess.call(f'grep -oE -m1 "https://[a-z.]+/smdrop/[0-9.]+/sourcemod-(.*)-{system}.tar.gz" downloads.html', stdout=file)
+        subprocess.call(f'grep -oE -m1 "https://[a-z.]+/smdrop/[0-9.]+/sourcemod-(.*)-{system}.zip" downloads.html', stdout=file)
     file.close()
 
 os.remove('downloads.html')
@@ -55,3 +56,7 @@ elif sm_url.endswith(".zip"):
     os.remove('sourcemod.zip')
 
 os.system(f'docker build -t {username}/spcomp:{system} .')
+
+shutil.rmtree('addons')
+
+shutil.rmtree('cfg')
