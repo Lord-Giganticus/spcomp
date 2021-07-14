@@ -16,8 +16,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
     - run: |
         sudo apt-get update
         sudo apt-get install -y wget grep unzip tar curl
-    - run: python Install.py ${{ matrix.os }} ${{ secrets.DOCKERHUB_USERNAME }}
+    - uses: docker/login-action@v1
+      with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - if: matrix.os == mac
+      shell: bash
+      run: |
+        export sm_url=$(wget -q -O - "http://www.sourcemod.net/downloads.php?branch=dev" | grep -oE -m1 "https://[a-z.]+/smdrop/[0-9.]+/sourcemod-(.*)-mac.zip")
+        wget -q $sm_url -O sourcemod.zip
+        unzip sourcemod.zip
+        rm sourcemod.zip
+        rm -r cfg
+        ls ${{ github.workspace }}
