@@ -1,5 +1,7 @@
 FROM debian:buster-slim
 
+ARG os=linux
+
 COPY install.sh /install.sh
 
 RUN mkdir /data \
@@ -8,7 +10,7 @@ RUN mkdir /data \
 	&& apt-get install -y wget unzip \
 	&& rm -rf /var/lib/apt/lists/*	
 
-RUN ./install.sh
+RUN ./install.sh $os
 
 WORKDIR /data
 
