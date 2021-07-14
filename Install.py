@@ -18,10 +18,18 @@ system = sys.argv[1]
 
 username = sys.argv[2]
 
-if system == "linux":
-    subprocess.call('cmd /c wget -q -O - "http://www.sourcemod.net/downloads.php?branch=dev" | grep -oE -m1 "https://[a-z.]+/smdrop/[0-9.]+/sourcemod-(.*)-linux.tar.gz" > link.txt')
-else:
-    subprocess.call(f'cmd /c wget -q -O - "http://www.sourcemod.net/downloads.php?branch=dev" | grep -oE -m1 "https://[a-z.]+/smdrop/[0-9.]+/sourcemod-(.*)-{system}.zip" > link.txt')
+with open('downloads.html','wb') as file:
+    subprocess.call('wget -O - http://www.sourcemod.net/downloads.php?branch=dev', stdout=file)
+    file.close()
+
+with open('link.txt','wb') as file:
+    if system == "linux":
+        subprocess.call('grep -oE -m1 "https://[a-z.]+/smdrop/[0-9.]+/sourcemod-(.*)-linux.tar.gz" downloads.html', stdout=file)
+    else:
+        subprocess.call(f'grep -oE -m1 "https://[a-z.]+/smdrop/[0-9.]+/sourcemod-(.*)-{system}.tar.gz" downloads.html', stdout=file)
+    file.close()
+
+os.remove('downloads.html')
 
 file = open("link.txt","r")
 
@@ -46,4 +54,4 @@ elif sm_url.endswith(".zip"):
         zip_ref.close()
     os.remove('sourcemod.zip')
 
-subprocess.call(f'docker build -t {username}/spcomp:{system} .')
+os.system(f'docker build -t {username}/spcomp:{system} .')
