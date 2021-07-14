@@ -1,0 +1,23 @@
+name: Docker CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [mac, windows, linux]
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+    - run: |
+        sudo apt-get update
+        sudo apt-get install -y wget grep unzip tar curl
+    - run: python Install.py ${{ matrix.os }} ${{ secrets.DOCKERHUB_USERNAME }}
