@@ -31,4 +31,23 @@ jobs:
         unzip sourcemod.zip
         rm sourcemod.zip
         rm -r cfg
-        ls ${{ github.workspace }}
+        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/spcomp:mac .
+    - if: matrix.os == 'windows'
+      shell: bash
+      run: |
+        export sm_url=$(wget -q -O - "http://www.sourcemod.net/downloads.php?branch=dev" | grep -oE -m1 "https://[a-z.]+/smdrop/[0-9.]+/sourcemod-(.*)-windows.zip")
+        wget -q $sm_url -O sourcemod.zip
+        unzip sourcemod.zip
+        rm sourcemod.zip
+        rm -r cfg
+        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/spcomp:windows .
+    - if: matrix.os == 'linux'
+      run: | 
+        export sm_url=$(wget -q -O - "http://www.sourcemod.net/downloads.php?branch=dev" | grep -oE -m1 "https://[a-z.]+/smdrop/[0-9.]+/sourcemod-(.*)-linux.tar.gz")
+        wget -q $sm_url -O sourcemod.tar.gz
+        tar -xzf sourcemod.tar.gz
+        rm sourcemod.tar.gz
+        rm -r cfg
+        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/spcomp:linux .
+    - if: github.ref == 'refs/heads/master'
+      run: "docker push ${{ secrets.DOCKERHUB_USERNAME }}/spcomp:${{ matrix.os }}"
