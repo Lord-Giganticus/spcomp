@@ -20,6 +20,6 @@ steps:
           docker cp ${{ matrix.build }}:/scripting ./scripting
       - uses: actions/upload-artifact@v2.2.4
         with:
-          name: Binaries for ${{ runner.os }}
+          name: Binaries for ${{ matrix.build }}
           path: ${{ github.workspace }}/scripting
 ```
