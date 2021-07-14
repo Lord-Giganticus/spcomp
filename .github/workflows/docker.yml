@@ -27,6 +27,8 @@ jobs:
       - run: |
           sudo apt-get update
           sudo apt-get install -y curl
+          sudo apt-get install -y wget
+          sudo apt-get install -y grep
       - run: python Install.py ${{ matrix.os }} ${{ secrets.DOCKERHUB_USERNAME }}
       - if: github.ref == 'refs/heads/master'
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/spcomp:${{ matrix.os }}
